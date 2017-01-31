@@ -5,7 +5,13 @@
         "target": "es5",
         "noImplicitAny": true,
         "sourceMap": true,
-		"jsx": "react"
+		"jsx": "react",
+		"typeRoots": [
+			"../node_modules/@types"
+		],
+		 "types": [
+			"core-js"
+		]
     },
 	"include": [
 		"./src/**/*"

@@ -1,3 +1,5 @@
+var webpack = require('webpack');
+
 module.exports = {
 	entry: "./src/index.tsx",
 	output: {
@@ -25,6 +27,13 @@ module.exports = {
 		"react": "React",
 		"react-dom": "ReactDOM"
 	},
+	
+	plugins: [  
+    new webpack.ProvidePlugin({
+          Promise: 'imports?this=>global!exports?global.Promise!es6-promise',
+          fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+     })
+	],
 	
 	watch: true
 }

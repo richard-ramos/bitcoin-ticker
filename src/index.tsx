@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Test } from "./components/Test";
+import { App } from "./components/App";
 
 ReactDOM.render(
-	<Test attrib="Success"  />,
+	<App />,
 	document.getElementById("content")
 );
