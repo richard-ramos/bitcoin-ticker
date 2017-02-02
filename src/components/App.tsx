@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { Line } from 'rc-progress';
 
 import 'whatwg-fetch';
 
@@ -27,6 +28,7 @@ export class App extends React.Component<Props, {}> {
 		return (
 			<div>
 				<BitcoinPrice value={123} />
+				<Line percent="45" strokeWidth="1" strokeColor="#f00" />
 			</div>
 		);
 	}
