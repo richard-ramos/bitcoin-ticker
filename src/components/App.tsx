@@ -7,28 +7,64 @@ import 'whatwg-fetch';
 import { BitcoinPrice } from "./BitcoinPrice";
 
 interface Props extends React.Props<App> { }
+interface State {
+	intervalId: any;
+	currentCount: number;
+}
 
-export class App extends React.Component<Props, {}> {
+export class App extends React.Component<Props, State> {
 	
-	private testJson(){
-		fetch('http://api.coindesk.com/v1/bpi/currentprice.json')
+	private intervalId: any;
+	private currentPrice: number;
+	
+	private getBitcoinPrice(){
+		let thisScope = this;
+		fetch('https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD')
 			.then(function(response) {
 				return response.json();
 			}).then(function(json) {
-				console.log(json);
+				thisScope.currentPrice = json.last;
+				thisScope.setState({currentCount: 100});
 			}).catch(function(ex){
 				console.log("Error");
+				console.log(ex);
 			});
 		
 	}
 	
-	public render(){
-		this.testJson();
+	constructor(props: any){
+        super(props);
+		this.state = { 
+			currentCount: 100,
+			intervalId: 0
+        };
 		
+		this.timer = this.timer.bind(this);
+    }
+	
+	public componentDidMount() {
+		var intervalId = setInterval(this.timer, 1000);
+		this.setState({intervalId: intervalId});
+		this.getBitcoinPrice();
+	}
+
+	public componentWillUnmount() {
+		clearInterval(this.state.intervalId);
+	}
+
+	public timer() : void {
+		if(this.state.currentCount == 0){
+			this.getBitcoinPrice();
+		} else {
+			this.setState({currentCount: this.state.currentCount - 1});
+		}
+	}
+		
+	public render(){
 		return (
 			<div>
-				<BitcoinPrice value={123} />
-				<Line percent="45" strokeWidth="1" strokeColor="#f00" />
+				<BitcoinPrice value={this.currentPrice} />
+				<Line percent={this.state.currentCount} strokeWidth="1" strokeColor="#f00" />
 			</div>
 		);
 	}
