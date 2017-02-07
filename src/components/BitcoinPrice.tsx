@@ -2,10 +2,22 @@ import * as React from "react";
 
 export interface BitcoinPriceProperties {
 	value: number;
+	difference: number;
 }
 
 export class BitcoinPrice extends React.Component<BitcoinPriceProperties, undefined> {
 	render(){
-		return <b>{this.props.value}</b>;
+		let symbol = null;
+		if (this.props.difference > 0){
+			symbol = '+';
+		} else {
+			symbol = '-';
+		}
+		
+		return 	<div>
+					<b>${this.props.value.toFixed(2)}</b> 
+					<span>({symbol}${Math.abs(this.props.difference.toFixed(2))})</span>
+			    </div> 
+		
 	}
 }

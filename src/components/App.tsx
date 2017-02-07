@@ -9,13 +9,16 @@ import { BitcoinPrice } from "./BitcoinPrice";
 interface Props extends React.Props<App> { }
 interface State {
 	intervalId: any;
-	currentCount: number;
+	progress: number;
 }
 
 export class App extends React.Component<Props, State> {
 	
 	private intervalId: any;
+	
 	private currentPrice: number;
+	
+	private difference: number;
 	
 	private getBitcoinPrice(){
 		let thisScope = this;
@@ -24,26 +27,29 @@ export class App extends React.Component<Props, State> {
 				return response.json();
 			}).then(function(json) {
 				thisScope.currentPrice = json.last;
-				thisScope.setState({currentCount: 100});
+				thisScope.difference = json.changes.price.day;
+				thisScope.setState({progress: 100});
 			}).catch(function(ex){
 				console.log("Error");
 				console.log(ex);
 			});
-		
 	}
 	
 	constructor(props: any){
         super(props);
 		this.state = { 
-			currentCount: 100,
+			progress: 100,
 			intervalId: 0
         };
+		
+		this.currentPrice = 0;
+		this.difference = 0;
 		
 		this.timer = this.timer.bind(this);
     }
 	
 	public componentDidMount() {
-		var intervalId = setInterval(this.timer, 1000);
+		let intervalId = setInterval(this.timer, 1000);
 		this.setState({intervalId: intervalId});
 		this.getBitcoinPrice();
 	}
@@ -53,18 +59,19 @@ export class App extends React.Component<Props, State> {
 	}
 
 	public timer() : void {
-		if(this.state.currentCount == 0){
+		if(this.state.progress == 0){
 			this.getBitcoinPrice();
 		} else {
-			this.setState({currentCount: this.state.currentCount - 1});
+			this.setState({progress: this.state.progress - 5});
 		}
 	}
 		
 	public render(){
 		return (
-			<div>
-				<BitcoinPrice value={this.currentPrice} />
-				<Line percent={this.state.currentCount} strokeWidth="1" strokeColor="#f00" />
+			<div className="centered widget">
+				<span className="title">Bitcoin Price</span>
+				<BitcoinPrice value={this.currentPrice} difference={this.difference} />
+				<Line percent={this.state.progress} strokeWidth="4" strokeColor="#ccc" />
 			</div>
 		);
 	}
