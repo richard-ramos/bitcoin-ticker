@@ -10,7 +10,10 @@ interface Props extends React.Props<App> { }
 interface State {
 	intervalId: any;
 	progress: number;
+	seconds: number;
 }
+
+const REFRESH_RATE : number = 900; // 15 minutes
 
 export class App extends React.Component<Props, State> {
 	
@@ -28,18 +31,19 @@ export class App extends React.Component<Props, State> {
 			}).then(function(json) {
 				thisScope.currentPrice = json.last;
 				thisScope.difference = json.changes.price.day;
-				thisScope.setState({progress: 100});
 			}).catch(function(ex){
 				console.log("Error");
 				console.log(ex);
 			});
+			thisScope.setState({progress: 100, seconds: REFRESH_RATE});
 	}
 	
 	constructor(props: any){
         super(props);
 		this.state = { 
 			progress: 100,
-			intervalId: 0
+			intervalId: 0,
+			seconds: 0,
         };
 		
 		this.currentPrice = 0;
@@ -62,7 +66,7 @@ export class App extends React.Component<Props, State> {
 		if(this.state.progress == 0){
 			this.getBitcoinPrice();
 		} else {
-			this.setState({progress: this.state.progress - 5});
+			this.setState({progress: Math.round((this.state.seconds / REFRESH_RATE) * 100), seconds: this.state.seconds - 1 });
 		}
 	}
 		
